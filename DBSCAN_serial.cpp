@@ -1,11 +1,3 @@
-// DBSCAN_serial.cpp
-// Serial point classification for DBSCAN-style core/outlier detection
-// Usage: DBSCAN_serial.exe input.csv eps min_samples [output.csv]
-// - input.csv: comma-separated rows with at least two numeric columns (x,y,...). No header.
-// - eps: float (Euclidean distance threshold). Note: we compare squared distances to avoid computing sqrt.
-// - min_samples: integer >= 1 (counts other points only, not the point itself).
-// - output.csv: optional. If omitted, will use input filename with "_results.csv" suffix.
-
 #include <bits/stdc++.h>
 using namespace std;
 

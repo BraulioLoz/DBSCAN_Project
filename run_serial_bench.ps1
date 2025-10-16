@@ -5,8 +5,12 @@
 # To measure compute-only you must add a compute-only/bench mode to the binary and
 # call that mode instead.
 
+# SE USÓ CHATGPT PARA HACER ESTE CÓDIGO YA QUE TENÍA QUE SACAR RÁPIDO LAS STATS SIN MODIFICAR EL CPP
+
 # --- Config
-$datasets = @(20000,40000,80000,120000)
+
+$datasets = @(20000,40000,80000,120000,200000)
+#$datasets = @(200000)
 $eps = 0.03
 $minSamples = 10
 $iterations = 10
@@ -16,7 +20,7 @@ $outSummary = "serial_summary.csv"
 $threads = 1  # serial runs -> threads=1
 
 # --- Prepare output
-"n_points,threads,iteration,elapsed_ms,cores1" | Out-File -Encoding utf8 $outRaw
+"n_points,threads,iteration,elapsed_ms,cores" | Out-File -Encoding utf8 $outRaw
 
 foreach ($n in $datasets) {
     $input = "$($n)_data.csv"
@@ -73,7 +77,7 @@ foreach ($n in $datasets) {
 $rows = Import-Csv $outRaw
 $groups = $rows | Group-Object -Property n_points
 
-"n_points,threads,mean_ms,stddev_ms,mean_cores1" | Out-File -Encoding utf8 $outSummary
+"n_points,mean_ms,mean_cores" | Out-File -Encoding utf8 $outSummary
 
 foreach ($g in $groups) {
     $n = [int]$g.Name
@@ -86,8 +90,8 @@ foreach ($g in $groups) {
     $stddev = [math]::Sqrt($sumSquares / [math]::Max(1,$count))
     $meanCores = ($g.Group | ForEach-Object { [int]$_.cores1 } | Measure-Object -Average).Average
 
-    "$n,1,$([math]::Round($mean,6)),$([math]::Round($stddev,6)),$([math]::Round($meanCores,3))" | Out-File -Append -Encoding utf8 $outSummary
-    Write-Host ("Summary N={0}: mean_ms={1:N3}, stddev_ms={2:N3}, mean_cores1={3:N0}" -f $n, $mean, $stddev, $meanCores)
+    "$n,$([math]::Round($mean,6)),$([math]::Round($meanCores,3))" | Out-File -Append -Encoding utf8 $outSummary
+    Write-Host ("Summary N={0}: mean_ms={1:N3}, mean_cores={2:N0}" -f $n, $mean, $meanCores)
 }
 
 Write-Host "`nDone. Raw: $outRaw  Summary: $outSummary"
