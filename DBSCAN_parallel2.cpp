@@ -128,8 +128,7 @@ vector<BlockInfo> build_block_grid(const BBox &global, int nx, int ny) {
     }
     return blocks;
 }
-
-// assign each point to all blocks whose expanded bbox will contain 
+ 
 // Le da los puntos que tendría cada bloque con el overlapping 
 void assign_points_to_blocks(const vector<float> &data, size_t N, size_t D, vector<BlockInfo> &blocks, double eps) {
     int B = (int)blocks.size();
@@ -249,9 +248,10 @@ void compute_labels_halo(const vector<float> &data, size_t N, size_t D, double e
         compute_block_labels(data, N, D, blocks[bi], eps, min_samples, out_labels_local);
 
         // escribe los owned resultados de vuelta al array global de labels
-        // solo escribimos para los índices que fueron seteados (0 o 1). Condiciones de carrera: ¿múltiples bloques pueden poseer el mismo punto? Por diseño, las áreas owned son disjuntas, así que es seguro.
+        // solo escribimos para los índices que fueron seteados (0 o 1). 
+        // Condiciones de carrera: ¿múltiples bloques pueden poseer el mismo punto? Por diseño, las áreas owned son disjuntas, así que es seguro.
         for (size_t idx = 0; idx < N; ++idx) {
-            if (out_labels_local[idx] != -1) labels[idx] = out_labels_local[idx];
+            if (out_labels_local[idx] != -1) labels[idx] = out_labels_local[idx]; 
         }
     }
 }
